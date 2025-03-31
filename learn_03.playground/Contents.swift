@@ -67,7 +67,7 @@ func validateRegistration(username: String, password: String, mobile: String, em
         return false
     }
     // 第二层验证：密码
-    guard password.count >= 8, password.rangeOfCharacter(from: CharacterSet.decimalDigits) != nil else {
+    guard password.count >= 8, password.rangeOfCharacter(from: .decimalDigits) != nil else {
         print("密码需8位以上且包含数字")
         return false
     }
@@ -88,3 +88,59 @@ func validateRegistration(username: String, password: String, mobile: String, em
 // 使用案例
 validateRegistration(username: "dev", password: "12345678", mobile: "13072970180", email: "test.com") // 失败
 validateRegistration(username: "coder", password: "swift5.9", mobile: "1307297018", email: "test@example.com") // 成功
+
+// 智能待办事项管理器
+enum Priority: Int {
+    case low = 1, medium, high
+}
+struct TodoItem {
+    let title: String
+    var isDone: Bool
+    let priority: Priority
+}
+class TodoManager {
+    private var items: [TodoItem] = []
+    
+    // 添加where子句约束
+    func addItem(_ item: TodoItem) {
+        guard item.priority != .low else {
+            return
+        }
+        items.append(item)
+    }
+    
+    // 使用guard提前退出
+    func completeItem(at index: Int) {
+        guard index >= 0 && index < items.count else {
+            print("索引越界")
+            return
+        }
+        guard !items[index].isDone else {
+            print("任务已完成")
+            return
+        }
+        items[index].isDone = true
+    }
+    
+    // 高阶函数组合
+    func showPendingHighPriorityTasks() {
+        for (index, item) in items.enumerated()
+        where !item.isDone && item.priority == .high {
+            print("\(index): \(item.title)")
+        }
+    }
+    
+    // 带返回值的循环
+    func findFirstMediumTask() -> TodoItem? {
+        for item in items where item.priority == .medium {
+            return item
+        }
+        return nil
+    }
+}
+// 使用示例
+let manager = TodoManager()
+manager.addItem(TodoItem(title: "发布App", isDone: false, priority: .high))
+manager.addItem(TodoItem(title: "购买服务器", isDone: true, priority: .medium))
+
+manager.showPendingHighPriorityTasks() // 输出：0: 发布App
